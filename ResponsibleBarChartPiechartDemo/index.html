@@ -1,0 +1,450 @@
+<html><head><meta charset="UTF-8">
+    <title>H1B Visa visualization - break down by top 20 cities</title>
+    <!--INLS690-224 Visual Analytics Semester Project
+    Name: Zhenwei Wang
+    PID: 720540314-->
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script type="text/javascript" src="./h1bdata.js" charset="utf-8"></script>
+    <style type="text/css">
+        .x-axis path {
+            stroke:white;
+            fill:none;
+        }
+        .x-axis line {
+            fill: none;
+            stroke: none;
+            stroke-opacity:.8;
+            shape-rendering: crispEdges;
+        }
+        .bars rect {
+            fill:steelblue;
+            fill-opacity:.9;
+        }
+        .title {
+            font-weight: bold;
+        }
+        #precise-value {
+            fill:white;
+            font-size: 11px;
+        }
+
+        .text {
+            font-size: 16px;
+        }
+
+        #title{
+            font-size: 15px;
+        }
+
+        #vis_container{
+            overflow: auto;
+        }
+        #barchart {
+            float:left;
+            width: 600px;
+            height: 560px;
+        }
+        #piechart {
+            float:left;
+            width: 730px;
+            height: 600px;
+        }
+        .labels{
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+        path.slice{
+            stroke-width:2px;
+        }
+
+        polyline{
+            opacity: .3;
+            stroke: black;
+            stroke-width: 2px;
+            fill: none;
+        }
+
+
+    </style>
+    </head>
+<p class="text"><br>&nbsp;&nbsp;&nbsp;&nbsp; Select the H1B visa application year to display:
+    <select onchange="render(this.options[this.selectedIndex].value)">
+        <option selected value="2010">2010</option>
+        <option value="2011">2011</option>
+        <option value="2012">2012</option>
+        <option value="2013">2013</option>
+        <option value="2014">2014</option>
+    </select>
+</p>
+<div id="vis_container"><div id="barchart"></div><div id="piechart"></div></div>
+<p class="text">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The data used in this visualization demonstration was retrieved on Sep 31, 2015 from United States Department of Labor Website (http://www.dol.gov/).
+</p>
+<body>
+<script type="text/javascript">
+
+
+    // filter here perform as the intermediate switch to remove old svg and replace a new one.
+    function filter(input){
+        var pointer = input;
+        d3.selectAll("svg").remove();
+        return pointer;
+    }
+
+    var file;
+
+    console.log("Version 1.0, November 20, 2015");
+
+    function render(input) {
+        var pointer = filter(input);
+        var file = raw_data.filter(function (d) {
+            return (d.year == pointer);
+        });
+        window.file = file;
+        var margin = {top: 50, bottom: 50, left: 140, right: 40};
+//        var width2 = parseInt(d3.select('#base_svg').style('width'), 10);
+        var width = 560 - margin.left - margin.right;
+        var height = 560 - margin.top - margin.bottom;
+        var xScale = d3.scale.linear().range([0, width]);
+        var yScale = d3.scale.ordinal().rangeRoundBands([0, height], 1.8, 0);
+
+
+        var numTicks = 6;
+        var xAxis = d3.svg.axis().scale(xScale)
+                .orient("top")
+                .tickSize((-height))
+                .ticks(numTicks);
+
+        var svg = d3.select("#barchart").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .attr("class", "bar-svg");
+
+        var barSvg = svg.append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+                .attr("class", "bar-svg");
+
+        var x = barSvg.append("g")
+                .attr("class", "x-axis");
+
+
+        var xMin = 0;
+        xScale.domain([0, 30000]);
+        yScale.domain(file.map(function (d) {
+            return d.city;
+        }));
+
+        d3.select(".bar-svg").append("text")
+                .attr("x", margin.left)
+                .attr("y", (margin.top) / 2)
+                .attr("text-anchor", "start")
+                .text("Top 20 H1B visa application cities (break down by year)")
+                .attr("class", "title");
+
+
+        var groups = barSvg.append("g").attr("class", "labels")
+                .selectAll("text")
+                .data(file);
+
+
+        groups.enter().append("g").append("text").transition()
+                .attr("x", "0")
+                .attr("y", function (d) {
+                    return yScale(d.city);
+                })
+                .text(function (d) {
+                    return d.city;
+                })
+                .attr("text-anchor", "end")
+                .attr("font-size", "12px")
+                .attr("dy", "1.05em")
+                .attr("dx", "-.32em")
+                .attr("id", function (d) {
+                    return d.city;
+                });
+
+
+        var bars = barSvg.selectAll("rect").data(file);
+
+        bars.enter().append("rect")
+                .attr("class", "bars")
+                .attr("width", 0)
+                .attr("height", height / 20)
+                .attr("x", xScale(xMin))
+                .style("fill", "steelblue")
+                .style('fill-opacity', 0)
+                .attr("y", function (d) {
+                    return yScale(d.city);
+                })
+                .attr("id", function (d) {
+                    return d.city;
+                })
+                .append("svg:title").text(function (d) {
+            return "City: " + d.city + "\nTotal Application: " + d.case_count;
+        });
+
+
+        bars.transition().delay(100).duration(900)
+                .attr("width", function (d) {
+                    return xScale(d.case_count);
+                })
+                .attr("height", height / 20)
+                .style('fill-opacity', 1)
+                .transition();
+
+        bars
+                .on("mouseover", function () {
+                    d3.select(this).style("fill", "#ff9900");
+                    d3.select(this).style("font-weight", "bold");
+                })
+                .on("mouseout", function () {
+                    d3.select(this).style("fill", "steelblue");
+                    d3.select(this).style("font-weight", "normal");
+                })
+                .on("click", function (d) {
+                    change(getData(d.city));
+                })
+        ;
+
+
+        x.call(xAxis);
+        var grid = xScale.ticks(numTicks);
+        barSvg.append("g").attr("class", "grid")
+                .selectAll("line")
+                .data(grid, function (d) {
+                    return d;
+                })
+                .enter().append("line")
+                .attr("y1", 0)
+                .attr("y2", height + margin.bottom)
+                .attr("x1", function (d) {
+                    return xScale(d);
+                })
+                .attr("x2", function (d) {
+                    return xScale(d);
+                })
+                .attr("stroke", "white");
+
+        var labels = barSvg.append("g").attr("class", "labels")
+                .selectAll("text")
+                .data(file)
+                .enter()
+                .append("g");
+
+        labels.append("text")
+                .attr("x", function (d) {
+                    return xScale(d.case_count);
+                })
+                .attr("y", function (d) {
+                    return yScale(d.city);
+                })
+                .text(function (d) {
+                    return d.case_count;
+                })
+                .attr("text-anchor", "end")
+                .attr("dy", "1.2em")
+                .attr("dx", "-.32em")
+                .attr("id", "precise-value");
+
+
+
+        /*Pie Chart Part*/
+
+        var width2 = 730, height2 = 600, radius = Math.min(width2, height2) / 3;
+
+        var svg = d3.select("#piechart")
+                .attr("class", "pie-svg")
+                .append("svg")
+                .append("g");
+
+        svg.append("g")
+                .attr("class", "slices");
+        svg.append("g")
+                .attr("class", "labels");
+        svg.append("g")
+                .attr("class", "lines");
+
+        var pie = d3.layout.pie()
+                .sort(null)
+                .value(function(d) {
+                    return d.value;
+                });
+
+        var arc = d3.svg.arc()
+                .outerRadius(radius * 0.6)
+                .innerRadius(radius * 0.3);
+
+        var outerArc = d3.svg.arc()
+                .innerRadius(radius * 0.55)
+                .outerRadius(radius * 0.55);
+
+        svg.attr("transform", "translate(" + width2 / 2 + "," + height2 / 2.5 + ")");
+
+
+        var color = d3.scale.ordinal()
+                .domain(["no1", "no2", "no3", "no4", "no5", "no6", "no7", "no8", "no9", "no10"])
+                .range(["#FF1212","#FF5912", "#FF6F12", "#FF8D12", "#FFD112", "#FFE612","F0FC12","#BEF311","#7CE610","#0EC625"]);
+
+        function getData (input){
+            var city = input;
+            d3.select("#title").remove();
+            svg.append("text")
+                    .attr("x", -247)
+                    .attr("y", -187)
+                    .attr("text-anchor", "start")
+                    .text("Top 10 Industries with most H1b Visa applications in the city of "+ city)
+                    .attr("class", "title")
+                    .attr("id","title");
+
+
+            var citylist = top_city_nacis.filter(function (d) {
+                return (d.city == city);});
+            var key =[];
+            for (i = 0; i < citylist.length; i++) {
+                key[i] = citylist[i]["industry"];
+            }
+            var newkey=key;
+            var labels = key;
+            var datalist = [];
+                for (i = 0; i < citylist.length; i++) {
+                    datalist[i] = citylist[i]["count"];
+                }
+                return labels.map(function (label, j) {
+                    var onecount = (datalist[j]/1000);
+                    j+=1;
+                    return {label: label, value:onecount}
+                })
+            }
+
+        var firstcity = file[0]["city"];
+        change(getData(firstcity));
+
+        var key;
+
+        function change(data) {
+
+            /* ------- PIE SLICES -------*/
+            var slice = svg.select(".slices").selectAll("path.slice")
+                    .data(pie(data), key);
+
+            slice.enter()
+                    .insert("path")
+                    .attr("opacity",0)
+                    .style("fill", function(d) { return color(d.data.label); })
+                    .attr("class", "slice")
+                    .append("svg:title").text(function (d) {
+                        return "Industry: " + d.data.label + "\nNumber of Companies: " + (d.data.value*1000);
+            });
+
+            slice
+                    .transition().delay(100).duration(800)
+                    .attr("opacity",1)
+                    .attrTween("d", function(d) {
+                        this._current = this._current || d;
+                        var interpolate = d3.interpolate(this._current, d);
+                        this._current = interpolate(0);
+                        return function(t) {
+                            return arc(interpolate(t));
+                        };
+                    })
+                    .select("title").text(function (d) {
+                        return "Industry: " + d.data.label + "\nNumber of Companies: " + (d.data.value*1000);
+                    });
+
+            slice.exit()
+                    .remove();
+
+
+
+            /* ------- TEXT LABELS -------*/
+
+            var text = svg.select(".labels").selectAll("text")
+                    .data(pie(data), key);
+
+            text.enter()
+                    .append("text")
+                    .attr("dy", ".35em")
+                    .text(function(d) {
+                        return d.data.label;
+                    });
+
+            function midAngle(d){
+                return d.startAngle + (d.endAngle - d.startAngle)/2;
+            }
+
+            text.transition().delay(100).duration(1000)
+                    .attrTween("transform", function(d) {
+                        this._current = this._current || d;
+                        var interpolate = d3.interpolate(this._current, d);
+                        this._current = interpolate(0);
+                        return function(t) {
+                            var d2 = interpolate(t);
+                            var pos = outerArc.centroid(d2);
+                            pos[0] = radius * (midAngle(d2) < Math.PI ? 0.55 : -0.55);
+                            return "translate("+ pos +")";
+                        };
+                    })
+                    .styleTween("text-anchor", function(d){
+                        this._current = this._current || d;
+                        var interpolate = d3.interpolate(this._current, d);
+                        this._current = interpolate(0);
+                        return function(t) {
+                            var d2 = interpolate(t);
+                            return midAngle(d2) < Math.PI ? "start":"end";
+                        };
+                    })
+                    .text(function(d) {
+                        return d.data.label;
+                    });
+            ;
+
+            text.exit()
+                    .remove();
+
+            /* ------- SLICE TO TEXT POLYLINES -------*/
+
+            var polyline = svg.select(".lines").selectAll("polyline")
+                    .data(pie(data), key);
+
+            polyline.enter()
+                    .append("polyline");
+
+            polyline.transition().duration(1000)
+                    .attrTween("points", function(d){
+                        this._current = this._current || d;
+                        var interpolate = d3.interpolate(this._current, d);
+                        this._current = interpolate(0);
+                        return function(t) {
+                            var d2 = interpolate(t);
+                            var pos = outerArc.centroid(d2);
+                            pos[0] = radius * 0.53 * (midAngle(d2) < Math.PI ? 1 : -1);
+                            return [arc.centroid(d2), outerArc.centroid(d2), pos];
+                        };
+                    });
+
+            polyline.exit()
+                    .remove();
+
+
+
+        }
+
+
+
+
+
+    }
+
+    render("2010");
+
+
+
+
+
+</script>
+</body>
+</html>
