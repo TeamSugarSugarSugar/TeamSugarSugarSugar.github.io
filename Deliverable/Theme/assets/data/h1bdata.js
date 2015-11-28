@@ -208,7 +208,7 @@ var top_city_nacis = [
 {"city": "PLANO, TX","naics": 541330, "industry":"Engineering Services","count": 25},
 {"city": "PLANO, TX","naics": 541611, "industry":"Admin Mngt and General Mngt Consulting Services","count": 14},
 {"city": "PLANO, TX","naics": 5415, "industry":"Computer Systems Design and Related Services","count": 14},
-{"city": "PLANO, TX","naics": 54151, "industry":"Computer Systems Design and Related Services","count": 13},
+{"city": "PLANO, TX","naics": 54151, "industry":"Computer Systems Design and Related Services, other","count": 13},
 {"city": "PLANO, TX","naics": 517210, "industry":"Wireless Telecommunications Carriers (except Satellite)","count": 13},
 {"city": "PLANO, TX","naics": 517212, "industry":"Cellular and Other Wireless Telecommunications","count": 12},
 {"city": "PLANO, TX","naics": 511210, "industry":"Software Publishers","count": 12},
