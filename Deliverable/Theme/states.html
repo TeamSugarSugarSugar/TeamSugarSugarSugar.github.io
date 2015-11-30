@@ -370,7 +370,7 @@
       var e = document.getElementById("selectedYear");
       var year = e.options[e.selectedIndex].value;
       var details = "In "+ d.properties.name+" there are "+d.properties.value
-                    +" cases applied, with the total number of "+sum_case+" case ("+parseFloat((d.properties.value/sum_case)*100).toFixed(2)
+                    +" cases applied, with the total number of "+sum_case+" case in that year ("+parseFloat((d.properties.value/sum_case)*100).toFixed(2)
                     +"%).";
       document.getElementById("applicationdetail").innerHTML = details;
       document.getElementById("certificationdetail").innerHTML = "Within the "+d.properties.value+" applied, there are "
