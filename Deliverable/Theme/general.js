@@ -199,9 +199,9 @@ function nestData(data){
           document.getElementById("details").innerHTML =  "<ul><li id=\"y1\"><strong>Year "+d.key+":</strong></li><li><strong>Total case number: </strong>"
                     +d.values.all+
                     "</li></ul><table id=\"result_table\"><tr><td><strong>Certified: </strong>"+d.values.certified+
-                    "</td><td><strong>&nbsp&nbsp&nbsp&nbspPercentage: </strong>"+Math.round((d.values.certified/d.values.all)*100)+"%</td></tr><tr><td><strong>C_withdraw: </strong>"+d.values.certi_withdraw +
+                    "</td><td><strong>&nbsp&nbsp&nbsp&nbspPercentage: </strong>"+Math.round((d.values.certified/d.values.all)*100)+"%</td></tr><tr><td><strong>C_withdrawn: </strong>"+d.values.certi_withdraw +
                     "</td><td><strong>&nbsp&nbsp&nbsp&nbspPercentage: </strong>"+Math.round((d.values.certi_withdraw/d.values.all)*100)+"%</td></tr><tr><td><strong>Denied: </strong>"+d.values.denied+
-                    "</td><td><strong>&nbsp&nbsp&nbsp&nbspPercentage: </strong>"+Math.round((d.values.denied/d.values.all)*100)+"%</td></tr><tr><td><strong>Withdraw: </strong>"+d.values.withdraw +
+                    "</td><td><strong>&nbsp&nbsp&nbsp&nbspPercentage: </strong>"+Math.round((d.values.denied/d.values.all)*100)+"%</td></tr><tr><td><strong>Withdrawn: </strong>"+d.values.withdraw +
                     "</td><td><strong>&nbsp&nbsp&nbsp&nbspPercentage: </strong>"+Math.round((d.values.withdraw/d.values.all)*100)+"%</td></tr><tr><td><strong>Other: </strong>"+d.values.other +
                     "</td><td><strong>&nbsp&nbsp&nbsp&nbspPercentage: </strong>"+Math.round((d.values.other/d.values.all)*100)+"%</td></tr></table>";
       }
