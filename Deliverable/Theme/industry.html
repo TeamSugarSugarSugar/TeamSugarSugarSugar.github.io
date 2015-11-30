@@ -159,14 +159,657 @@
       <!--main content start-->
       <section id="main-content">
           <section class="wrapper site-min-height">
-          	<h3><i class="fa fa-angle-right"></i> Blank Page</h3>
-          	<div class="row mt">
-          		<div class="col-lg-12">
-          		<p>Place your content here.</p>
-          		</div>
-          	</div>
-			
-		</section><! --/wrapper -->
+          	<p>&nbsp</p>
+              <html>
+              <head>
+                  <title>occupation</title>
+                  <script src="http://d3js.org/d3.v3.min.js"></script>
+                  <script src="http://ils.unc.edu/~gotz/courses/js/d3-tip.js"></script>
+                  <style>
+                      /* Style information for axis labels */
+                      .d3-tip{
+                          position:absolute;
+                          font-family:Arial;
+                          line-height: 1;
+                          font-weight: bold;
+                          font-size: 12px;
+                          text-align: left;
+                          background: white;
+                          padding:10px;
+                          /*border: 1px solid black;*/
+                          border-radius:5px;
+                          box-shadow: 2px 2px 2px 2px #888888;
+
+                      }
+
+
+                      div#main_container{width:1000px}
+                      div#vis_container {height:800px; width:800px; float:left;}
+                      div#explain_container {height:800px; width:200px; float:left;}
+
+                  </style>
+              </head>
+
+              <body>
+              Select Year:
+              <select id="year_select" onchange="select_year(this.options[this.selectedIndex].value);">
+                  <option value="2010">2010</option>
+                  <option value="2011">2011</option>
+                  <option value="2012">2012</option>
+                  <option value="2013">2013</option>
+                  <option value="2014" selected>2014</option>
+              </select>
+              Select Display Mode:
+              <select id="occupation_select" onchange="select_option(this.options[this.selectedIndex].value);">
+                  <option value="all" selected>Display all industry</option>
+                  <option value="separate">Separate different industries</option>
+              </select>
+
+
+              <div id="main_container">
+                  <div id="vis_container">
+                  </div>
+                  <div id="explain_container">
+                      <h5> Visualization of H-1B Application in Different Occupations</h5>
+                      <p>The radius of each circle represents the application number in each occupation every year:</p>
+                      <div id="graph"></div>
+                      <p></p>
+                      <p>Color shows the average annual wage in each industry:</p>
+                      <div id="color">
+                          <img src="color.jpg"><br>
+                      </div>
+                  </div>
+              </div>
+
+              <script>
+
+                  var occupation_data=[{"year":2010,"occupation":"Computer Programmers","application_num":41204,"avg_annual_wage":273398.80,"major":"it"},
+                      {"year":2010,"occupation":"Computer Systems Analysts","application_num":38049,"avg_annual_wage":257425.78,"major":"it"},
+                      {"year":2010,"occupation":"Computer Software Engineers, Applications","application_num":32879,"avg_annual_wage":255142.28,"major":"it"},
+                      {"year":2010,"occupation":"Computer Software Engineers, Systems Software","application_num":14177,"avg_annual_wage":188079.11,"major":"it"},
+                      {"year":2010,"occupation":"Financial Analysts","application_num":8400,"avg_annual_wage":373661.33,"major":"finance"},
+                      {"year":2010,"occupation":"Market Research Analysts","application_num":7877,"avg_annual_wage":156641.14,"major":"finance"},
+                      {"year":2010,"occupation":"Management Analysts","application_num":6586,"avg_annual_wage":190266.73,"major":"finance"},
+                      {"year":2010,"occupation":"Physicians and Surgeons, All Other","application_num":6567,"avg_annual_wage":464681.35,"major":"health"},
+                      {"year":2010,"occupation":"Accountants","application_num":5463,"avg_annual_wage":182382.35,"major":"finance"},
+                      {"year":2010,"occupation":"Mechanical Engineers","application_num":5300,"avg_annual_wage":284679.07,"major":"other"},
+                      {"year":2010,"occupation":"Electrical Engineers","application_num":4837,"avg_annual_wage":109309.96,"major":"it"},
+                      {"year":2010,"occupation":"Physical Therapists","application_num":4387,"avg_annual_wage":125304.34,"major":"health"},
+                      {"year":2010,"occupation":"Electronics Engineers, Except Computer","application_num":4201,"avg_annual_wage":263895.96,"major":"it"},
+                      {"year":2010,"occupation":"Network and Computer Systems Administrators","application_num":4186,"avg_annual_wage":190050.35,"major":"it"},
+                      {"year":2010,"occupation":"Database Administrators","application_num":4062,"avg_annual_wage":266622.77,"major":"it"},
+                      {"year":2010,"occupation":"Medical Scientists, Except Epidemiologists","application_num":3774,"avg_annual_wage":151864.94,"major":"health"},
+                      {"year":2010,"occupation":"Operations Research Analysts","application_num":3272,"avg_annual_wage":316301.09,"major":"finance"},
+                      {"year":2010,"occupation":"Accountants and Auditors","application_num":3228,"avg_annual_wage":202044.54,"major":"finance"},
+                      {"year":2010,"occupation":"Marketing Managers","application_num":3154,"avg_annual_wage":257455.09,"major":"finance"},
+                      {"year":2010,"occupation":"Software Quality Assurance Engineers and Testers","application_num":2936,"avg_annual_wage":151550.19,"major":"it"},
+                      {"year":2010,"occupation":"Biochemists and Biophysicists","application_num":2853,"avg_annual_wage":124636.87,"major":"other"},
+                      {"year":2010,"occupation":"Civil Engineers","application_num":2845,"avg_annual_wage":147663.70,"major":"other"},
+                      {"year":2010,"occupation":"Computer and Information Systems Managers","application_num":2837,"avg_annual_wage":333283.82,"major":"it"},
+                      {"year":2010,"occupation":"Computer Specialists, All Other","application_num":2835,"avg_annual_wage":281310.35,"major":"it"},
+                      {"year":2010,"occupation":"Secondary School Teachers, Except Special and Voca","application_num":2683,"avg_annual_wage":112373.32,"major":"other"},
+                      {"year":2010,"occupation":"Industrial Engineers","application_num":2678,"avg_annual_wage":185633.41,"major":"other"},
+                      {"year":2010,"occupation":"Biological Scientists, All Other","application_num":2609,"avg_annual_wage":131944.77,"major":"other"},
+                      {"year":2010,"occupation":"Business Operations Specialists, All Other","application_num":2577,"avg_annual_wage":250176.58,"major":"finance"},
+                      {"year":2010,"occupation":"Pharmacists","application_num":2569,"avg_annual_wage":434916.61,"major":"health"},
+                      {"year":2010,"occupation":"General and Operations Managers","application_num":2392,"avg_annual_wage":187951.22,"major":"finance"},
+                      {"year":2010,"occupation":"Internists, General","application_num":2243,"avg_annual_wage":170434.71,"major":"health"},
+                      {"year":2010,"occupation":"Chemists","application_num":2239,"avg_annual_wage":267926.01,"major":"other"},
+                      {"year":2010,"occupation":"Elementary School Teachers, Except Special Educati","application_num":2153,"avg_annual_wage":130239.04,"major":"other"},
+                      {"year":2010,"occupation":"Graphic Designers","application_num":2098,"avg_annual_wage":90831.92,"major":"other"},
+                      {"year":2010,"occupation":"Financial Managers","application_num":1973,"avg_annual_wage":403763.06,"major":"finance"},
+                      {"year":2010,"occupation":"Managers, All Other","application_num":1902,"avg_annual_wage":92976.88,"major":"finance"},
+                      {"year":2010,"occupation":"Statisticians","application_num":1747,"avg_annual_wage":228661.87,"major":"other"},
+                      {"year":2010,"occupation":"Computer Systems Engineers/Architects","application_num":1744,"avg_annual_wage":132028.42,"major":"it"},
+                      {"year":2010,"occupation":"Medical and Health Services Managers","application_num":1658,"avg_annual_wage":138803.55,"major":"health"},
+                      {"year":2010,"occupation":"Engineering Managers","application_num":1594,"avg_annual_wage":119511.79,"major":"other"},
+                      {"year":2010,"occupation":"Biological Technicians","application_num":1526,"avg_annual_wage":89523.13,"major":"other"},
+                      {"year":2010,"occupation":"Lawyers","application_num":1439,"avg_annual_wage":441569.18,"major":"other"},
+                      {"year":2010,"occupation":"Sales Engineers","application_num":1376,"avg_annual_wage":238611.88,"major":"other"},
+                      {"year":2010,"occupation":"Public Relations Specialists","application_num":1320,"avg_annual_wage":108103.24,"major":"other"},
+                      {"year":2010,"occupation":"Chemical Engineers","application_num":1264,"avg_annual_wage":448792.54,"major":"other"},
+                      {"year":2010,"occupation":"Sales Managers","application_num":1242,"avg_annual_wage":94653.61,"major":"finance"},
+                      {"year":2010,"occupation":"Medical and Clinical Laboratory Technologists","application_num":1226,"avg_annual_wage":47983.47,"major":"health"},
+                      {"year":2010,"occupation":"Health Specialties Teachers, Postsecondary","application_num":1224,"avg_annual_wage":795513.19,"major":"health"},
+                      {"year":2010,"occupation":"Network Systems and Data Communications Analysts","application_num":1184,"avg_annual_wage":349107.58,"major":"it"},
+                      {"year":2010,"occupation":"Engineers, All Other","application_num":1179,"avg_annual_wage":273429.87,"major":"other"},
+                      {"year":2010,"occupation":"Architects, Except Landscape and Naval","application_num":1162,"avg_annual_wage":375591.25,"major":"other"},
+                      {"year":2010,"occupation":"Occupational Therapists","application_num":1111,"avg_annual_wage":67551.36,"major":"health"},
+                      {"year":2010,"occupation":"Life Scientists, All Other","application_num":1037,"avg_annual_wage":1348519.15,"major":"other"},
+                      {"year":2010,"occupation":"Physicists","application_num":1032,"avg_annual_wage":615946.47,"major":"other"},
+                      {"year":2010,"occupation":"Registered Nurses","application_num":1028,"avg_annual_wage":59267.36,"major":"health"},
+                      {"year":2010,"occupation":"Computer Support Specialists","application_num":1018,"avg_annual_wage":425762.14,"major":"it"},
+                      {"year":2010,"occupation":"Biochemists","application_num":1013,"avg_annual_wage":334758.55,"major":"other"},
+                      {"year":2011,"occupation":"Computer Systems Analysts","application_num":42952,"avg_annual_wage":175200.73,"major":"it"},
+                      {"year":2011,"occupation":"Computer Programmers","application_num":40221,"avg_annual_wage":197479.78,"major":"it"},
+                      {"year":2011,"occupation":"Computer Software Engineers, Applications","application_num":27000,"avg_annual_wage":299971.50,"major":"it"},
+                      {"year":2011,"occupation":"Software Developers, Applications","application_num":9945,"avg_annual_wage":216198.40,"major":"it"},
+                      {"year":2011,"occupation":"Computer Software Engineers, Systems Software","application_num":9696,"avg_annual_wage":271378.89,"major":"it"},
+                      {"year":2011,"occupation":"Financial Analysts","application_num":7610,"avg_annual_wage":331115.46,"major":"finance"},
+                      {"year":2011,"occupation":"Management Analysts","application_num":7275,"avg_annual_wage":294919.93,"major":"finance"},
+                      {"year":2011,"occupation":"Mechanical Engineers","application_num":5748,"avg_annual_wage":144955.61,"major":"other"},
+                      {"year":2011,"occupation":"Physicians and Surgeons, All Other","application_num":5546,"avg_annual_wage":281638.20,"major":"health"},
+                      {"year":2011,"occupation":"Electrical Engineers","application_num":5208,"avg_annual_wage":280744.67,"major":"it"},
+                      {"year":2011,"occupation":"Electronics Engineers, Except Computer","application_num":5130,"avg_annual_wage":211146.72,"major":"it"},
+                      {"year":2011,"occupation":"Market Research Analysts","application_num":4657,"avg_annual_wage":214029.87,"major":"finance"},
+                      {"year":2011,"occupation":"Accountants and Auditors","application_num":4188,"avg_annual_wage":79595.93,"major":"finance"},
+                      {"year":2011,"occupation":"Database Administrators","application_num":4022,"avg_annual_wage":210695.64,"major":"it"},
+                      {"year":2011,"occupation":"Software Quality Assurance Engineers and Testers","application_num":3780,"avg_annual_wage":246258.48,"major":"it"},
+                      {"year":2011,"occupation":"Operations Research Analysts","application_num":3695,"avg_annual_wage":306671.77,"major":"finance"},
+                      {"year":2011,"occupation":"Computer Occupations, All Other*","application_num":3513,"avg_annual_wage":141246.47,"major":"it"},
+                      {"year":2011,"occupation":"Medical Scientists, Except Epidemiologists","application_num":3406,"avg_annual_wage":107587.04,"major":"health"},
+                      {"year":2011,"occupation":"Physical Therapists","application_num":3403,"avg_annual_wage":227622.34,"major":"health"},
+                      {"year":2011,"occupation":"Biochemists and Biophysicists","application_num":3172,"avg_annual_wage":130540.29,"major":"other"},
+                      {"year":2011,"occupation":"Accountants","application_num":3112,"avg_annual_wage":87832.58,"major":"finance"},
+                      {"year":2011,"occupation":"Network and Computer Systems Administrators","application_num":3105,"avg_annual_wage":103746.55,"major":"it"},
+                      {"year":2011,"occupation":"Computer and Information Systems Managers","application_num":2971,"avg_annual_wage":401245.77,"major":"it"},
+                      {"year":2011,"occupation":"Software Developers, Systems Software","application_num":2835,"avg_annual_wage":225129.08,"major":"it"},
+                      {"year":2011,"occupation":"Industrial Engineers","application_num":2787,"avg_annual_wage":498091.39,"major":"other"},
+                      {"year":2011,"occupation":"Marketing Managers","application_num":2571,"avg_annual_wage":106709.33,"major":"finance"},
+                      {"year":2011,"occupation":"Civil Engineers","application_num":2532,"avg_annual_wage":126945.59,"major":"other"},
+                      {"year":2011,"occupation":"Internists, General","application_num":2280,"avg_annual_wage":180041.01,"major":"health"},
+                      {"year":2011,"occupation":"Computer Specialists, All Other","application_num":2091,"avg_annual_wage":154667.55,"major":"it"},
+                      {"year":2011,"occupation":"Chemists","application_num":2016,"avg_annual_wage":177930.14,"major":"other"},
+                      {"year":2011,"occupation":"Computer Systems Engineers/Architects","application_num":1929,"avg_annual_wage":312315.91,"major":"it"},
+                      {"year":2011,"occupation":"Graphic Designers","application_num":1919,"avg_annual_wage":153278.08,"major":"other"},
+                      {"year":2011,"occupation":"Statisticians","application_num":1905,"avg_annual_wage":75964.90,"major":"other"},
+                      {"year":2011,"occupation":"General and Operations Managers","application_num":1825,"avg_annual_wage":111459.07,"major":"other"},
+                      {"year":2011,"occupation":"Biological Scientists, All Other","application_num":1813,"avg_annual_wage":189410.62,"major":"other"},
+                      {"year":2011,"occupation":"Elementary School Teachers, Except Special Educati","application_num":1790,"avg_annual_wage":196020.53,"major":"other"},
+                      {"year":2011,"occupation":"Market Research Analysts and Marketing Specialists","application_num":1738,"avg_annual_wage":58100.89,"major":"finance"},
+                      {"year":2011,"occupation":"Pharmacists","application_num":1698,"avg_annual_wage":113413.11,"major":"health"},
+                      {"year":2011,"occupation":"Financial Managers","application_num":1530,"avg_annual_wage":589070.67,"major":"finance"},
+                      {"year":2011,"occupation":"Network and Computer Systems Administrators*","application_num":1486,"avg_annual_wage":262391.48,"major":"it"},
+                      {"year":2011,"occupation":"Business Operations Specialists, All Other","application_num":1427,"avg_annual_wage":53451.28,"major":"finance"},
+                      {"year":2011,"occupation":"Chemical Engineers","application_num":1376,"avg_annual_wage":184578.03,"major":"other"},
+                      {"year":2011,"occupation":"Managers, All Other","application_num":1358,"avg_annual_wage":92926.79,"major":"other"},
+                      {"year":2011,"occupation":"Secondary School Teachers, Except Special and Voca","application_num":1304,"avg_annual_wage":48040.13,"major":"other"},
+                      {"year":2011,"occupation":"Lawyers","application_num":1283,"avg_annual_wage":293560.03,"major":"other"},
+                      {"year":2011,"occupation":"Sales Engineers","application_num":1242,"avg_annual_wage":85192.45,"major":"finance"},
+                      {"year":2011,"occupation":"Biological Technicians","application_num":1206,"avg_annual_wage":108374.44,"major":"other"},
+                      {"year":2011,"occupation":"Medical and Health Services Managers","application_num":1206,"avg_annual_wage":400229.27,"major":"health"},
+                      {"year":2011,"occupation":"Engineering Managers","application_num":1178,"avg_annual_wage":266789.42,"major":"other"},
+                      {"year":2011,"occupation":"Health Specialties Teachers, Postsecondary","application_num":1170,"avg_annual_wage":190605.31,"major":"health"},
+                      {"year":2011,"occupation":"Public Relations Specialists","application_num":1169,"avg_annual_wage":47783.26,"major":"other"},
+                      {"year":2011,"occupation":"Medical and Clinical Laboratory Technologists","application_num":1139,"avg_annual_wage":49037.44,"major":"health"},
+                      {"year":2011,"occupation":"Engineers, All Other","application_num":1138,"avg_annual_wage":160384.34,"major":"other"},
+                      {"year":2011,"occupation":"Sales Managers","application_num":1116,"avg_annual_wage":96417.90,"major":"finance"},
+                      {"year":2011,"occupation":"Family and General Practitioners","application_num":1111,"avg_annual_wage":438617.44,"major":"health"},
+                      {"year":2011,"occupation":"Commercial and Industrial Designers","application_num":1077,"avg_annual_wage":57051.77,"major":"other"},
+                      {"year":2012,"occupation":"Computer Systems Analysts","application_num":67507,"avg_annual_wage":158020.18,"major":"it"},
+                      {"year":2012,"occupation":"Computer Programmers","application_num":53338,"avg_annual_wage":174696.43,"major":"it"},
+                      {"year":2012,"occupation":"Software Developers, Applications","application_num":47958,"avg_annual_wage":216914.41,"major":"it"},
+                      {"year":2012,"occupation":"Computer Occupations, All Other*","application_num":22107,"avg_annual_wage":182485.61,"major":"it"},
+                      {"year":2012,"occupation":"Software Developers, Systems Software","application_num":12197,"avg_annual_wage":270739.49,"major":"it"},
+                      {"year":2012,"occupation":"Management Analysts","application_num":9491,"avg_annual_wage":150463.64,"major":"finance"},
+                      {"year":2012,"occupation":"Accountants and Auditors","application_num":9096,"avg_annual_wage":122743.32,"major":"finance"},
+                      {"year":2012,"occupation":"Financial Analysts","application_num":8512,"avg_annual_wage":200211.07,"major":"finance"},
+                      {"year":2012,"occupation":"Market Research Analysts and Marketing Specialists","application_num":6917,"avg_annual_wage":179487.58,"major":"finance"},
+                      {"year":2012,"occupation":"Mechanical Engineers","application_num":6554,"avg_annual_wage":192715.53,"major":"other"},
+                      {"year":2012,"occupation":"Network and Computer Systems Administrators*","application_num":6261,"avg_annual_wage":115386.81,"major":"it"},
+                      {"year":2012,"occupation":"Electrical Engineers","application_num":5514,"avg_annual_wage":142665.48,"major":"it"},
+                      {"year":2012,"occupation":"Physicians and Surgeons, All Other","application_num":5382,"avg_annual_wage":174370.96,"major":"health"},
+                      {"year":2012,"occupation":"Electronics Engineers, Except Computer","application_num":5097,"avg_annual_wage":264335.62,"major":"it"},
+                      {"year":2012,"occupation":"Database Administrators","application_num":4890,"avg_annual_wage":194811.15,"major":"it"},
+                      {"year":2012,"occupation":"Operations Research Analysts","application_num":4788,"avg_annual_wage":294420.95,"major":"finance"},
+                      {"year":2012,"occupation":"Computer and Information Systems Managers","application_num":4249,"avg_annual_wage":117655.29,"major":"it"},
+                      {"year":2012,"occupation":"Physical Therapists","application_num":4247,"avg_annual_wage":65742.29,"major":"health"},
+                      {"year":2012,"occupation":"Biochemists and Biophysicists","application_num":4126,"avg_annual_wage":146474.15,"major":"other"},
+                      {"year":2012,"occupation":"Medical Scientists, Except Epidemiologists","application_num":4066,"avg_annual_wage":58298.30,"major":"health"},
+                      {"year":2012,"occupation":"Industrial Engineers","application_num":3463,"avg_annual_wage":247155.77,"major":"other"},
+                      {"year":2012,"occupation":"Civil Engineers","application_num":2685,"avg_annual_wage":181324.84,"major":"other"},
+                      {"year":2012,"occupation":"Marketing Managers","application_num":2670,"avg_annual_wage":194617.48,"major":"finance"},
+                      {"year":2012,"occupation":"Biological Scientists, All Other","application_num":2451,"avg_annual_wage":217838.40,"major":"other"},
+                      {"year":2012,"occupation":"Internists, General","application_num":2340,"avg_annual_wage":307030.34,"major":"health"},
+                      {"year":2012,"occupation":"Computer Software Engineers, Applications","application_num":2240,"avg_annual_wage":526377.32,"major":"it"},
+                      {"year":2012,"occupation":"Chemists","application_num":2149,"avg_annual_wage":99972.00,"major":"other"},
+                      {"year":2012,"occupation":"Graphic Designers","application_num":2125,"avg_annual_wage":52561.81,"major":"other"},
+                      {"year":2012,"occupation":"Business Operations Specialists, All Other*","application_num":2062,"avg_annual_wage":107141.04,"major":"finance"},
+                      {"year":2012,"occupation":"Financial Managers","application_num":2045,"avg_annual_wage":332789.89,"major":"finance"},
+                      {"year":2012,"occupation":"Statisticians","application_num":2043,"avg_annual_wage":132191.07,"major":"other"},
+                      {"year":2012,"occupation":"General and Operations Managers","application_num":2037,"avg_annual_wage":339572.94,"major":"other"},
+                      {"year":2012,"occupation":"Pharmacists","application_num":1957,"avg_annual_wage":110767.88,"major":"health"},
+                      {"year":2012,"occupation":"Secondary School Teachers, Except Special and Care","application_num":1710,"avg_annual_wage":86622.96,"major":"other"},
+                      {"year":2012,"occupation":"Elementary School Teachers, Except Special Educati","application_num":1686,"avg_annual_wage":45278.11,"major":"other"},
+                      {"year":2012,"occupation":"Information Security Analysts, Web Developers, and","application_num":1540,"avg_annual_wage":206548.02,"major":"it"},
+                      {"year":2012,"occupation":"Sales Engineers","application_num":1503,"avg_annual_wage":180777.99,"major":"finance"},
+                      {"year":2012,"occupation":"Managers, All Other","application_num":1473,"avg_annual_wage":204247.19,"major":"other"},
+                      {"year":2012,"occupation":"Biological Technicians","application_num":1443,"avg_annual_wage":92360.26,"major":"other"},
+                      {"year":2012,"occupation":"Chemical Engineers","application_num":1436,"avg_annual_wage":90545.06,"major":"other"},
+                      {"year":2012,"occupation":"Commercial and Industrial Designers","application_num":1392,"avg_annual_wage":138868.72,"major":"other"},
+                      {"year":2012,"occupation":"Architectural and Engineering Managers","application_num":1347,"avg_annual_wage":271657.24,"major":"other"},
+                      {"year":2012,"occupation":"Engineers, All Other","application_num":1323,"avg_annual_wage":394376.77,"major":"other"},
+                      {"year":2012,"occupation":"Health Specialties Teachers, Postsecondary","application_num":1296,"avg_annual_wage":608219.93,"major":"health"},
+                      {"year":2012,"occupation":"Lawyers","application_num":1262,"avg_annual_wage":288468.34,"major":"other"},
+                      {"year":2012,"occupation":"Public Relations Specialists","application_num":1213,"avg_annual_wage":203322.88,"major":"other"},
+                      {"year":2012,"occupation":"Sales Managers","application_num":1144,"avg_annual_wage":263374.97,"major":"finance"},
+                      {"year":2012,"occupation":"Medical and Clinical Laboratory Technologists","application_num":1143,"avg_annual_wage":50883.89,"major":"health"},
+                      {"year":2012,"occupation":"Computer Hardware Engineers","application_num":1130,"avg_annual_wage":240094.02,"major":"it"},
+                      {"year":2012,"occupation":"Occupational Therapists","application_num":1082,"avg_annual_wage":68597.75,"major":"health"},
+                      {"year":2012,"occupation":"Medical and Health Services Managers","application_num":1073,"avg_annual_wage":337259.08,"major":"health"},
+                      {"year":2012,"occupation":"Computer and Information Research Scientists","application_num":1046,"avg_annual_wage":100104.57,"major":"it"},
+                      {"year":2012,"occupation":"Logisticians","application_num":1040,"avg_annual_wage":167159.19,"major":"other"},
+                      {"year":2012,"occupation":"Physicists","application_num":1025,"avg_annual_wage":173225.26,"major":"other"},
+                      {"year":2013,"occupation":"Computer Systems Analysts","application_num":84541,"avg_annual_wage":128879.88,"major":"it"},
+                      {"year":2013,"occupation":"Computer Programmers","application_num":57740,"avg_annual_wage":143834.37,"major":"it"},
+                      {"year":2013,"occupation":"Software Developers, Applications","application_num":57124,"avg_annual_wage":207550.56,"major":"it"},
+                      {"year":2013,"occupation":"Computer Occupations, All Other","application_num":29744,"avg_annual_wage":147986.29,"major":"it"},
+                      {"year":2013,"occupation":"Software Developers, Systems Software","application_num":13732,"avg_annual_wage":278589.97,"major":"it"},
+                      {"year":2013,"occupation":"Management Analysts","application_num":9837,"avg_annual_wage":229631.15,"major":"finance"},
+                      {"year":2013,"occupation":"Financial Analysts","application_num":8159,"avg_annual_wage":226381.69,"major":"finance"},
+                      {"year":2013,"occupation":"Accountants and Auditors","application_num":7692,"avg_annual_wage":118065.81,"major":"other"},
+                      {"year":2013,"occupation":"Network and Computer Systems Administrators","application_num":6661,"avg_annual_wage":90453.16,"major":"it"},
+                      {"year":2013,"occupation":"Market Research Analysts and Marketing Specialists","application_num":6259,"avg_annual_wage":198729.67,"major":"finance"},
+                      {"year":2013,"occupation":"Electronics Engineers, Except Computer","application_num":6130,"avg_annual_wage":216773.79,"major":"it"},
+                      {"year":2013,"occupation":"Mechanical Engineers","application_num":6108,"avg_annual_wage":123332.22,"major":"other"},
+                      {"year":2013,"occupation":"Physicians and Surgeons, All Other","application_num":5424,"avg_annual_wage":232956.11,"major":"health"},
+                      {"year":2013,"occupation":"Database Administrators","application_num":5397,"avg_annual_wage":198334.06,"major":"it"},
+                      {"year":2013,"occupation":"Electrical Engineers","application_num":5117,"avg_annual_wage":139721.98,"major":"it"},
+                      {"year":2013,"occupation":"Operations Research Analysts","application_num":4893,"avg_annual_wage":269486.99,"major":"finance"},
+                      {"year":2013,"occupation":"Medical Scientists, Except Epidemiologists","application_num":4497,"avg_annual_wage":72544.21,"major":"health"},
+                      {"year":2013,"occupation":"Computer and Information Systems Managers","application_num":4023,"avg_annual_wage":232025.13,"major":"it"},
+                      {"year":2013,"occupation":"Physical Therapists","application_num":3531,"avg_annual_wage":114008.84,"major":"health"},
+                      {"year":2013,"occupation":"Biochemists and Biophysicists","application_num":3418,"avg_annual_wage":507691.16,"major":"other"},
+                      {"year":2013,"occupation":"Industrial Engineers","application_num":2971,"avg_annual_wage":112449.52,"major":"other"},
+                      {"year":2013,"occupation":"Biological Scientists, All Other","application_num":2663,"avg_annual_wage":166121.25,"major":"other"},
+                      {"year":2013,"occupation":"Marketing Managers","application_num":2455,"avg_annual_wage":185154.22,"major":"finance"},
+                      {"year":2013,"occupation":"Statisticians","application_num":2270,"avg_annual_wage":452980.33,"major":"other"},
+                      {"year":2013,"occupation":"Internists, General","application_num":2254,"avg_annual_wage":1338027.71,"major":"health"},
+                      {"year":2013,"occupation":"Civil Engineers","application_num":2180,"avg_annual_wage":134756.74,"major":"other"},
+                      {"year":2013,"occupation":"Chemists","application_num":2096,"avg_annual_wage":149763.64,"major":"other"},
+                      {"year":2013,"occupation":"Information Security Analysts, Web Developers, and","application_num":1983,"avg_annual_wage":132719.58,"major":"it"},
+                      {"year":2013,"occupation":"Pharmacists","application_num":1875,"avg_annual_wage":111968.94,"major":"health"},
+                      {"year":2013,"occupation":"Graphic Designers","application_num":1830,"avg_annual_wage":109549.65,"major":"other"},
+                      {"year":2013,"occupation":"Financial Managers","application_num":1613,"avg_annual_wage":419665.68,"major":"finance"},
+                      {"year":2013,"occupation":"General and Operations Managers","application_num":1612,"avg_annual_wage":120009.42,"major":"other"},
+                      {"year":2013,"occupation":"Engineers, All Other","application_num":1605,"avg_annual_wage":364094.90,"major":"other"},
+                      {"year":2013,"occupation":"Elementary School Teachers, Except Special Educati","application_num":1600,"avg_annual_wage":46337.31,"major":"other"},
+                      {"year":2013,"occupation":"Secondary School Teachers, Except Special and Care","application_num":1587,"avg_annual_wage":409801.85,"major":"other"},
+                      {"year":2013,"occupation":"Health Specialties Teachers, Postsecondary","application_num":1544,"avg_annual_wage":214902.25,"major":"health"},
+                      {"year":2013,"occupation":"Business Operations Specialists, All Other","application_num":1526,"avg_annual_wage":299742.04,"major":"finance"},
+                      {"year":2013,"occupation":"Commercial and Industrial Designers","application_num":1525,"avg_annual_wage":59939.64,"major":"other"},
+                      {"year":2013,"occupation":"Sales Engineers","application_num":1471,"avg_annual_wage":481013.74,"major":"finance"},
+                      {"year":2013,"occupation":"Biological Technicians","application_num":1374,"avg_annual_wage":39977.44,"major":"other"},
+                      {"year":2013,"occupation":"Managers, All Other","application_num":1291,"avg_annual_wage":298758.21,"major":"other"},
+                      {"year":2013,"occupation":"Chemical Engineers","application_num":1243,"avg_annual_wage":343180.71,"major":"other"},
+                      {"year":2013,"occupation":"Architectural and Engineering Managers","application_num":1231,"avg_annual_wage":308676.66,"major":"other"},
+                      {"year":2013,"occupation":"Computer Software Engineers, Applications","application_num":1209,"avg_annual_wage":222819.07,"major":"it"},
+                      {"year":2013,"occupation":"Logisticians","application_num":1188,"avg_annual_wage":159412.52,"major":"other"},
+                      {"year":2013,"occupation":"Computer and Information Research Scientists","application_num":1118,"avg_annual_wage":934299.45,"major":"it"},
+                      {"year":2013,"occupation":"Lawyers","application_num":1105,"avg_annual_wage":236799.07,"major":"other"},
+                      {"year":2013,"occupation":"Sales Managers","application_num":1071,"avg_annual_wage":104833.51,"major":"finance"},
+                      {"year":2013,"occupation":"Public Relations Specialists","application_num":1060,"avg_annual_wage":243907.35,"major":"other"},
+                      {"year":2013,"occupation":"Computer Hardware Engineers","application_num":1043,"avg_annual_wage":98232.53,"major":"it"},
+                      {"year":2013,"occupation":"Medical and Clinical Laboratory Technologists","application_num":1004,"avg_annual_wage":193923.10,"major":"health"},
+                      {"year":2014,"occupation":"Computer Systems Analysts","application_num":92984,"avg_annual_wage":160081.84,"major":"it"},
+                      {"year":2014,"occupation":"Software Developers, Applications","application_num":77878,"avg_annual_wage":167591.76,"major":"it"},
+                      {"year":2014,"occupation":"Computer Programmers","application_num":72353,"avg_annual_wage":232593.33,"major":"it"},
+                      {"year":2014,"occupation":"Computer Occupations, All Other","application_num":39573,"avg_annual_wage":136871.93,"major":"it"},
+                      {"year":2014,"occupation":"Software Developers, Systems Software","application_num":15726,"avg_annual_wage":215296.17,"major":"it"},
+                      {"year":2014,"occupation":"Management Analysts","application_num":11654,"avg_annual_wage":150802.66,"major":"finance"},
+                      {"year":2014,"occupation":"Accountants and Auditors","application_num":9488,"avg_annual_wage":2349579.86,"major":"finance"},
+                      {"year":2014,"occupation":"Financial Analysts","application_num":9316,"avg_annual_wage":143087.32,"major":"finance"},
+                      {"year":2014,"occupation":"Network and Computer Systems Administrators","application_num":8182,"avg_annual_wage":203330.29,"major":"it"},
+                      {"year":2014,"occupation":"Mechanical Engineers","application_num":7402,"avg_annual_wage":132846.51,"major":"other"},
+                      {"year":2014,"occupation":"Database Administrators","application_num":7286,"avg_annual_wage":132629.83,"major":"it"},
+                      {"year":2014,"occupation":"Market Research Analysts and Marketing Specialists","application_num":7241,"avg_annual_wage":197844.83,"major":"finance"},
+                      {"year":2014,"occupation":"Electronics Engineers, Except Computer","application_num":6601,"avg_annual_wage":140176.68,"major":"it"},
+                      {"year":2014,"occupation":"Electrical Engineers","application_num":5913,"avg_annual_wage":201169.84,"major":"it"},
+                      {"year":2014,"occupation":"Operations Research Analysts","application_num":5556,"avg_annual_wage":236790.30,"major":"finance"},
+                      {"year":2014,"occupation":"Physicians and Surgeons, All Other","application_num":5520,"avg_annual_wage":241902.02,"major":"health"},
+                      {"year":2014,"occupation":"Medical Scientists, Except Epidemiologists","application_num":4595,"avg_annual_wage":184876.50,"major":"health"},
+                      {"year":2014,"occupation":"Computer and Information Systems Managers","application_num":4467,"avg_annual_wage":390277.89,"major":"it"},
+                      {"year":2014,"occupation":"Web Developers","application_num":3746,"avg_annual_wage":66611.33,"major":"it"},
+                      {"year":2014,"occupation":"Biochemists and Biophysicists","application_num":3374,"avg_annual_wage":54258.72,"major":"other"},
+                      {"year":2014,"occupation":"Industrial Engineers","application_num":3296,"avg_annual_wage":205477.05,"major":"other"},
+                      {"year":2014,"occupation":"Physical Therapists","application_num":3270,"avg_annual_wage":68428.78,"major":"health"},
+                      {"year":2014,"occupation":"Statisticians","application_num":2833,"avg_annual_wage":193189.06,"major":"other"},
+                      {"year":2014,"occupation":"Biological Scientists, All Other","application_num":2830,"avg_annual_wage":228500.81,"major":"other"},
+                      {"year":2014,"occupation":"Marketing Managers","application_num":2711,"avg_annual_wage":217809.38,"major":"finance"},
+                      {"year":2014,"occupation":"Civil Engineers","application_num":2425,"avg_annual_wage":138073.66,"major":"other"},
+                      {"year":2014,"occupation":"Engineers, All Other","application_num":2296,"avg_annual_wage":208962.49,"major":"other"},
+                      {"year":2014,"occupation":"Internists, General","application_num":2263,"avg_annual_wage":1219619.37,"major":"health"},
+                      {"year":2014,"occupation":"Chemists","application_num":2183,"avg_annual_wage":128350.64,"major":"other"},
+                      {"year":2014,"occupation":"Graphic Designers","application_num":2006,"avg_annual_wage":183282.41,"major":"other"},
+                      {"year":2014,"occupation":"Commercial and Industrial Designers","application_num":1918,"avg_annual_wage":126053.08,"major":"other"},
+                      {"year":2014,"occupation":"Sales Engineers","application_num":1819,"avg_annual_wage":96194.17,"major":"finance"},
+                      {"year":2014,"occupation":"Financial Managers","application_num":1710,"avg_annual_wage":154118.52,"major":"finance"},
+                      {"year":2014,"occupation":"Health Specialties Teachers, Postsecondary","application_num":1687,"avg_annual_wage":243546.04,"major":"health"},
+                      {"year":2014,"occupation":"General and Operations Managers","application_num":1686,"avg_annual_wage":125265.66,"major":"other"},
+                      {"year":2014,"occupation":"Secondary School Teachers, Except Special and Care","application_num":1508,"avg_annual_wage":109801.85,"major":"other"},
+                      {"year":2014,"occupation":"Architectural and Engineering Managers","application_num":1482,"avg_annual_wage":299837.43,"major":"other"},
+                      {"year":2014,"occupation":"Pharmacists","application_num":1428,"avg_annual_wage":761647.77,"major":"health"},
+                      {"year":2014,"occupation":"Elementary School Teachers, Except Special Educati","application_num":1423,"avg_annual_wage":46391.64,"major":"other"},
+                      {"year":2014,"occupation":"Business Operations Specialists, All Other","application_num":1401,"avg_annual_wage":329049.84,"major":"finance"},
+                      {"year":2014,"occupation":"Logisticians","application_num":1377,"avg_annual_wage":158958.09,"major":"other"},
+                      {"year":2014,"occupation":"Lawyers","application_num":1313,"avg_annual_wage":353131.36,"major":"other"},
+                      {"year":2014,"occupation":"Computer and Information Research Scientists","application_num":1291,"avg_annual_wage":104795.87,"major":"it"},
+                      {"year":2014,"occupation":"Managers, All Other","application_num":1281,"avg_annual_wage":108114.99,"major":"other"},
+                      {"year":2014,"occupation":"Biological Technicians","application_num":1253,"avg_annual_wage":177127.78,"major":"other"},
+                      {"year":2014,"occupation":"Chemical Engineers","application_num":1239,"avg_annual_wage":212778.05,"major":"other"},
+                      {"year":2014,"occupation":"Public Relations Specialists","application_num":1180,"avg_annual_wage":52827.07,"major":"other"},
+                      {"year":2014,"occupation":"Materials Engineers","application_num":1177,"avg_annual_wage":81849.68,"major":"other"},
+                      {"year":2014,"occupation":"Computer Hardware Engineers","application_num":1162,"avg_annual_wage":98287.03,"major":"it"},
+                      {"year":2014,"occupation":"Human Resources Specialists","application_num":1160,"avg_annual_wage":310862.76,"major":"other"},
+                      {"year":2014,"occupation":"Sales Managers","application_num":1109,"avg_annual_wage":108468.36,"major":"finance"},
+                      {"year":2014,"occupation":"Medical and Clinical Laboratory Technologists","application_num":1091,"avg_annual_wage":143821.30,"major":"health"},
+                      {"year":2014,"occupation":"Business Teachers, Postsecondary","application_num":1060,"avg_annual_wage":316820.10,"major":"other"},
+                      {"year":2014,"occupation":"Family and General Practitioners","application_num":1038,"avg_annual_wage":179063.86,"major":"health"},
+                      {"year":2014,"occupation":"Architects, Except Landscape and Naval","application_num":1014,"avg_annual_wage":59785.73,"major":"other"}];
+
+
+
+
+                  // This variable is used to define size of the visualization canvas and the
+                  // margin (or "padding") around the scattter plot.  We use the margin to draw
+                  // things like axis labels.
+                  var height = 800;
+                  var width = 800;
+                  var margin = 40;
+                  var padding = 2;
+                  var maxRadius=45000;
+
+
+                  // Create the SVG canvas that will be used to render the visualization.
+                  var svg = d3.select("#vis_container")
+                          .append("svg")
+                          .attr("width", width)
+                          .attr("height", height);
+
+                  this.year="2014";
+                  this.option="all";
+
+                  var svg2=d3.select("#graph")
+                          .append("svg")
+                          .attr("width",200)
+                          .attr("height",120);
+
+                  var circles_graph=[{id:1,r:50,x:50,y:50},
+                      {id:2,r:35,x:50,y:65},
+                      {id:3,r:25,x:50,y:75},
+                      {id:4,r:14,x:50,y:86},
+                      {id:5,r:8,x:50,y:92}
+                  ];
+
+                  var circle_graph=svg2.selectAll(".exp")
+                          .data(circles_graph,function(d){return d.id;});
+                  circle_graph.enter().append("circle")
+                          .attr("class","explanation")
+                          .attr("r", function(d){return d.r;})
+                          .attr("cx",function(d){return d.x;})
+                          .attr("cy",function(d){return d.y;})
+                          .attr("fill","white")
+                          .attr("stroke-width",1)
+                          .attr("stroke","gray")
+                          .attr("stroke-dasharray", "5,5");
+
+                  var texts_graph=[{id:1,r:40,text:">10,000",x:50,y:50},
+                      {id:2,r:35,text:"4,800~10,000",x:50,y:65},
+                      {id:3,r:25,text:"2,200~4,800",x:50,y:75},
+                      {id:4,r:14,text:"1,300~2,200",x:50,y:86},
+                      {id:5,r:8,text:"<1,300",x:50,y:92}
+                  ];
+
+                  var text_graph=svg2.selectAll(".exp_text")
+                          .data(texts_graph)
+                          .enter()
+                          .append("text")
+                          .attr("x",function(d){return d.x+60;})
+                          .attr("y",function(d){return d.y-d.r;})
+                          .attr("font-size","8px")
+                          .text(function(d){return d.text;});
+
+
+
+                  function select_year(year){
+                      this.year=year;
+                      svg.selectAll(".node").remove();
+                      svg.selectAll(".label").remove();
+                      renderVis();
+                  }
+
+                  function select_option(option){
+                      this.option=option;
+                      renderVis();
+                  }
+
+
+
+
+
+                  function renderVis() {
+
+                      var data = occupation_data.filter(function(d) {return (d.year == this.year); });
+                      // var fill = d3.scale.category20();
+                      var fill= d3.scale.ordinal().domain(["very low", "low", "high","very high"]).range(["#2ca02c", "#98df8a", "#ffbb78","#ff7f0e"]);
+                      var center={
+                          x:width/2,
+                          y:height/3
+                      };
+
+                      var force = d3.layout.force();
+                      var nodes=[];
+
+                      var tool_tip = d3.tip()
+                              .attr('class', 'd3-tip')
+                              .offset([-8, 0]);
+
+                      svg.call(tool_tip);
+
+                      data.forEach(function(d) {
+                          var level;
+                          if (d.avg_annual_wage / 10000 < 10)
+                              level="very low";
+                          else if (d.avg_annual_wage / 10000 >= 10 && d.avg_annual_wage / 10000 < 20)
+                              level="low";
+                          else if (d.avg_annual_wage / 10000 >= 20 && d.avg_annual_wage / 10000 < 26)
+                              level="high";
+                          else level="very high";
+
+                          var r;
+                          if (d.application_num / 1000 < 1.3)
+                              r=8;
+                          else if (d.application_num / 1000 >= 1.3 && d.application_num / 1000 < 2.2)
+                              r=14;
+                          else if (d.application_num / 1000 >= 2.2 && d.application_num / 1000 < 4.8)
+                              r=25;
+                          else if (d.application_num / 1000 >= 4.8 && d.application_num / 1000 < 10)
+                              r=35;
+                          else r=50;
+
+                          var index;
+                          if (d.major=="it")
+                              index=0;
+                          else if (d.major=="finance")
+                              index=1;
+                          else if (d.major=="health")
+                              index=2;
+                          else index=3;
+
+                          var node = {
+                              name: d.occupation,
+                              radius: r,
+                              value: d.application_num,
+                              wage: d.avg_annual_wage,
+                              type: level,
+                              year: d.year,
+                              industry: d.major,
+                              i:index,
+                              x: Math.random()*width,
+                              y: Math.random()*height
+
+                          };
+                          nodes.push(node);
+                      });
+
+                      var circles=svg.selectAll(".node")
+                              .data(nodes,function(d){return d.name;});
+                      circles.enter().append("circle")
+                              .attr("class","node")
+                              .attr("r", 0)
+                              .attr("fill", function(d){ return fill(d.type);})
+                              .attr("stroke-width", 2)
+                              .attr("stroke", function(d){return d3.rgb(fill(d.type)).darker();})
+                              .attr("id", function(d){ return "bubble_" + d.occupation;})
+                              .on("mouseover", function(d){
+                                  var html= d.name+"</br><p>"
+                                          +"Application Number : "+d.value+"</br><p>"
+                                          +"Average Annual Wage : "+d.wage;
+                                  d3.select(this).attr("stroke", "black");
+                                  tool_tip.html(html);
+                                  tool_tip.show();
+
+                              })
+                              .on("mouseout", function(){
+                                  d3.select(this).attr("stroke", function(d){return d3.rgb(fill(d.type)).darker();});
+                                  tool_tip.hide();
+                              });
+
+
+
+                      circles.transition()
+                              .duration(2000)
+                              .attr("r", function(d) { return d.radius;});
+
+                      circles.exit()
+                              .transition().duration(200)
+                              .style('fill-opacity', 0)
+                              .remove();
+
+
+                      force.nodes(nodes)
+                              .size([width, height]);
+
+
+                      if(this.option=="all"){
+                          svg.selectAll(".label").remove();
+                          force.gravity(0)
+                                  .charge(0)
+                                  .friction(0.2)
+                                  .on("tick", function(e) {
+                                      circles.each(function(d) {
+
+                                          d.x = d.x + (center.x - d.x) * e.alpha;
+                                          d.y = d.y + (center.y - d.y) * e.alpha;
+                                      });
+                                      circles
+                                              .each(collide(0.3, nodes))
+                                              .attr("cx", function(d) {
+                                                  return d.x;
+                                              })
+                                              .attr("cy", function(d) {
+                                                  return d.y;
+                                              });
+                                  });
+
+
+                          force.start();
+                      }
+                      else{
+                          var centers=[
+                              {
+                                  x:1/4*width,
+                                  y:1/3*height
+
+                              },
+                              {
+                                  x:3/4*width,
+                                  y:1/3*height
+
+                              },
+                              {
+                                  x:1/4*width,
+                                  y:600
+                              },
+                              {
+                                  x:3/4*width,
+                                  y:600
+
+                              }];
+
+                          force.gravity(0)
+                                  .charge(0)
+                                  .friction(0.2)
+                                  .on("tick", function(e) {
+                                      circles.each(function(d) {
+                                          d.x = d.x + (centers[d.i].x - d.x) * e.alpha;
+                                          d.y = d.y + (centers[d.i].y - d.y) * e.alpha;
+                                      });
+                                      circles
+                                              .each(collide(0.3, nodes))
+                                              .attr("cx", function(d) {
+                                                  return d.x;
+                                              })
+                                              .attr("cy", function(d) {
+                                                  return d.y;
+                                              });
+                                  });
+
+                          var labels=[
+                              {id:1,x:180,y:100,text:"IT Related"},
+                              {id:2,x:580,y:100,text:"Business&Finance"},
+                              {id:3,x:180,y:500,text:"Health Care Services"},
+                              {id:4,x:580,y:500,text:"Other"}
+                          ];
+
+
+
+                          svg.selectAll(".label")
+                                  .data(labels).enter().append("text")
+                                  .attr("class", "label")
+                                  .text(function(d) {
+                                      return d.text;
+                                  })
+                                  .attr("x",function(d){return d.x;})
+                                  .attr("y",function(d){return d.y;})
+                                  .attr("font-family","Comic Sans MS");
+
+                          force.start();
+                      }
+
+                  }
+
+
+
+                  function collide(alpha,nodes) {
+                      var quadtree = d3.geom.quadtree(nodes);
+                      return function(d) {
+                          var r = d.radius + maxRadius + padding,
+                                  nx1 = d.x - r,
+                                  nx2 = d.x + r,
+                                  ny1 = d.y - r,
+                                  ny2 = d.y + r;
+                          quadtree.visit(function(quad, x1, y1, x2, y2) {
+                              if (quad.point && (quad.point !== d)) {
+                                  var x = d.x - quad.point.x,
+                                          y = d.y - quad.point.y,
+                                          l = Math.sqrt(x * x + y * y),
+                                          r = d.radius + quad.point.radius + padding;
+                                  if (l < r) {
+                                      l = (l - r) / l * alpha;
+                                      d.x -= x *= l;
+                                      d.y -= y *= l;
+                                      quad.point.x += x;
+                                      quad.point.y += y;
+                                  }
+                              }
+                              return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+                          });
+                      };
+                  }
+
+                  // As the very last step, we make the initial call to renderVis with "us" as the
+                  // input parameter.  This is because "United States" is the default option for the
+                  // select control.  We want to default the visualization to show the same thing.
+                  renderVis();
+
+              </script>
+
+              </body>
+              </html>
+
+
+          </section><! --/wrapper -->
       </section><!-- /MAIN CONTENT -->
 
       <!--main content end-->

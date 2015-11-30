@@ -60,19 +60,22 @@
                   fill-opacity:.9;
               }
               .title {
+                  font-size: 10px;
                   font-weight: bold;
               }
               #precise-value {
                   fill:white;
                   font-size: 11px;
               }
-
+              .bar-svg text {
+                  font-size: 14px;
+              }
               .text {
                   font-size: 16px;
               }
 
               #title{
-                  font-size: 15px;
+                  font-size: 14px;
               }
 
               #vis_container{
@@ -80,19 +83,18 @@
               }
               #barchart {
                   float:left;
-                  width: 600px;
-                  height: 560px;
+                  width: 550px;
+                  height: 500px;
               }
               #piechart {
                   float:left;
-                  width: 730px;
-                  height: 600px;
+                  width: 650px;
+                  height: 500px;
               }
               .labels{
-                  font-size: 12px;
+                  font-size: 10px;
                   font-weight: bold;
               }
-
               svg {
                   width: 99%;
                   height: 99%;
@@ -262,8 +264,8 @@
                       window.file = file;
                       var margin = {top: 50, bottom: 50, left: 140, right: 40};
 //        var width2 = parseInt(d3.select('#base_svg').style('width'), 10);
-                      var width = 560 - margin.left - margin.right;
-                      var height = 560 - margin.top - margin.bottom;
+                      var width = 500 - margin.left - margin.right;
+                      var height = 500 - margin.top - margin.bottom;
                       var xScale = d3.scale.linear().range([0, width]);
                       var yScale = d3.scale.ordinal().rangeRoundBands([0, height], 1.8, 0);
 
@@ -401,15 +403,15 @@
                                   return d.case_count;
                               })
                               .attr("text-anchor", "end")
-                              .attr("dy", "1.2em")
-                              .attr("dx", "-.32em")
+                              .attr("dy", "1.22em")
+                              .attr("dx", "-.05em")
                               .attr("id", "precise-value");
 
 
 
                       /*Pie Chart Part*/
 
-                      var width2 = 730, height2 = 600, radius = Math.min(width2, height2) / 3;
+                      var width2 = 500, height2 = 600, radius = Math.min(width2, height2) / 4;
 
                       var svg = d3.select("#piechart")
                               .attr("class", "pie-svg")
@@ -448,7 +450,7 @@
                           var city = input;
                           d3.select("#title").remove();
                           svg.append("text")
-                                  .attr("x", -255)
+                                  .attr("x", -235)
                                   .attr("y", -187)
                                   .attr("text-anchor", "start")
                                   .text("Top 10 Industries with most H1b Visa applications in the city of "+ city)
@@ -600,7 +602,7 @@
 
 
 
-              </script>
+              </script></body>
 		</section><! --/wrapper -->
       </section><!-- /MAIN CONTENT -->
 
