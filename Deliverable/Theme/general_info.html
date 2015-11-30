@@ -18,6 +18,180 @@
     <link href="assets/css/style.css" rel="stylesheet">
     <link href="assets/css/style-responsive.css" rel="stylesheet">
 
+    <style>
+
+.bar {
+  fill: orange;
+}
+
+.bar:hover {
+  fill: orangered;
+}
+
+.certified{
+  fill:#FF6666;
+}
+
+.certified_wd{
+  fill:#0099CC;
+}
+
+
+
+.denied{
+  fill:rgb(255, 230, 18);
+}
+
+.withdraw{
+  fill:#996699;
+}
+
+.other{
+  fill:#99CC66;
+
+}
+
+.axis {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.d3-tip{
+  line-height:1;
+  /*font-weight: bold;*/
+  padding: 12px;
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+
+.d3-tip:after{
+  box-sizing: border-box;
+  display: inline;
+  font-size: 8px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0,0,0,0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+.d3-tip.n:after{
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+.marks{
+  width:28px;
+  height:14px;
+  border:1px;
+}
+
+
+.m_text{
+  font-size: 10px;
+}
+
+#pie_all {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: auto;
+  position: relative;
+  width: 500px;
+}
+
+#details{
+  margin-left: 10px;
+}
+
+.parts{
+  width:130px;
+  height:150px;
+  margin-left: 10px;
+  margin-right:10px;
+  border-style:solid;
+  border-width:3px;
+}
+
+#total{
+  
+  border-color:steelblue;
+}
+#certified{
+  
+  border-color:#FF6666;
+}
+#certi_wd{
+  
+  border-color:#0099CC;
+}
+#denied{
+  
+  border-color:rgb(255, 230, 18);
+}
+#wd{
+  
+  border-color:#996699;
+}
+#other{
+  
+  border-color:#99CC66;
+}
+
+#t1,#t2,#t3,#t4,#t5,#t6{
+  font-size: 23px;
+  text-align: center;
+  font-family: "Abadi MT Condensed Extra Bold";
+}
+#t1,#c1{
+  color:steelblue;
+}
+#t2,#c2{
+  color:#FF6666;
+}
+#t3,#c3{
+  color:#0099CC;
+}
+#t4,#c4{
+  color:rgb(255, 230, 18);
+}
+#t5,#c5{
+  color:#996699;
+}
+#t6,#c6{
+  color:#99CC66;
+}
+#n1,#n2,#n3,#n4,#n5,#n6{
+  text-align:center;
+}
+#c1,#c2,#c3,#c4,#c5,#c6{
+  text-align:center;
+  font-size: 37px;
+}
+#y1{
+  font-size: 30px;
+  color:steelblue;
+}
+
+#result_table{
+  margin-left: 20px;
+}
+
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -83,75 +257,11 @@
                       </a>
                   </li>
 
-                  <!-- <li class="sub-menu">
-                      <a href="javascript:;" >
-                          <i class="fa fa-desktop"></i>
-                          <span>UI Elements</span>
-                      </a>
-                      <ul class="sub">
-                          <li><a  href="general.html">General</a></li>
-                          <li><a  href="buttons.html">Buttons</a></li>
-                          <li><a  href="panels.html">Panels</a></li>
-                      </ul>
-                  </li> -->
-
-                  <!-- <li class="sub-menu">
-                      <a href="javascript:;" >
-                          <i class="fa fa-cogs"></i>
-                          <span>Components</span>
-                      </a>
-                      <ul class="sub">
-                          <li><a  href="calendar.html">Calendar</a></li>
-                          <li><a  href="gallery.html">Gallery</a></li>
-                          <li><a  href="todo_list.html">Todo List</a></li>
-                      </ul>
-                  </li> -->
-                  <!-- <li class="sub-menu">
-                      <a class="active" href="javascript:;" >
-                          <i class="fa fa-book"></i>
-                          <span>Extra Pages</span>
-                      </a>
-                      <ul class="sub">
-                          <li class="active"><a  href="blank.html">Blank Page</a></li>
-                          <li><a  href="login.html">Login</a></li>
-                          <li><a  href="lock_screen.html">Lock Screen</a></li>
-                      </ul>
-                  </li> -->
-                  <!-- <li class="sub-menu">
-                      <a href="javascript:;" >
-                          <i class="fa fa-tasks"></i>
-                          <span>Forms</span>
-                      </a>
-                      <ul class="sub">
-                          <li><a  href="form_component.html">Form Components</a></li>
-                      </ul>
-                  </li>
-                  <li class="sub-menu">
-                      <a href="javascript:;" >
-                          <i class="fa fa-th"></i>
-                          <span>Data Tables</span>
-                      </a>
-                      <ul class="sub">
-                          <li><a  href="basic_table.html">Basic Table</a></li>
-                          <li><a  href="responsive_table.html">Responsive Table</a></li>
-                      </ul>
-                  </li> -->
-                  <!-- <li class="sub-menu">
-                      <a href="javascript:;" >
-                          <i class=" fa fa-bar-chart-o"></i>
-                          <span>Charts</span>
-                      </a>
-                      <ul class="sub">
-                          <li><a  href="morris.html">Morris</a></li>
-                          <li><a  href="chartjs.html">Chartjs</a></li>
-                      </ul>
-                  </li> -->
-
               </ul>
-              <!-- sidebar menu end-->
+              
           </div>
       </aside>
-      <!--sidebar end-->
+      
       
       <!-- **********************************************************************************************************************************************************
       MAIN CONTENT
@@ -159,15 +269,62 @@
       <!--main content start-->
       <section id="main-content">
           <section class="wrapper site-min-height">
-          	<h3><i class="fa fa-angle-right"></i> Blank Page</h3>
-          	<div class="row mt">
+            <h3><i class="fa fa-angle-right"></i> General Overview</h3>
+            <p class="text"><br>&nbsp;&nbsp;&nbsp;&nbsp;Select the H1B type:
+              <select onchange="render(this.options[this.selectedIndex].value)">
+                <option selected value="H-1B">H-1B</option>
+                <option selected value="H-1B1 Chile">H-1B1 Chile</option>
+                <option selected value="H-1B1 Singapore">H-1B1 Singapore</option>
+                <option selected value="E-3 Australian">E-3 Australian</option>
+                <option selected value="Not Specified">Not Specified</option>
+                <option selected value="All">All</option>
+              </select>
+            </p>
+          	
+          	<!-- <div class="row mt"> -->
           		<div class="col-lg-12">
-          		<p>Place your content here.</p>
+          		<!-- <p>Place your content here.</p> -->
+              <table>
+                <tr>
+                  <td>
+              <!-- <svg class="chart"></svg> -->
+              <div id="chart"></div></td>
+              <td> 
+                <table id="legend">
+                  <tr><td><div class="marks" style="background-color:#FF6666;"></div></td><td class="m_text">CERTIFIED</td></tr>
+                  <tr><td><div class="marks" style="background-color:#0099CC;"></div></td><td class="m_text">CERTIFIED WITHDRAW</td></tr>
+                  <tr><td><div class="marks" style="background-color:rgb(255, 230, 18);"></div></td><td class="m_text">DENIED</td></tr>
+                  <tr><td><div class="marks" style="background-color:#996699;"></div></td><td class="m_text">WITHDRAW</td></tr>
+                  <tr><td><div class="marks" style="background-color:#99CC66;"></div></td><td class="m_text">OTHER</td></tr>
+                </table>
+              </td>
+              <!-- detail information here -->
+              <td>
+                <div id="details"></div>
+              </td>
+            </tr>
+          </table>
+          <div>
+            <h3><i class="fa fa-angle-right"></i> Percentage of Selected Visa type</h3>
+            <p>Among all the visa types for different status in chosen year</p>
+          <table>
+            <tr>
+            <td><div class="parts" id="total"><p id="t1">Total</p><p id="n1"></p><div id="c1"></div></div></td>
+            <td><div class="parts" id="certified"><p id="t2">Certified</p><p id="n2"></p><div id="c2"></div></div></td>
+            <td><div class="parts" id="certi_wd"><p id="t3">C_Withdrawn</p><p id="n3"></p><div id="c3"></div></div></td>
+            <td><div class="parts" id="denied"><p id="t4">Denied</p><p id="n4"></p><div id="c4"></div></div></td>
+            <td><div class="parts" id="wd"><p id="t5">Withdrawn</p><p id="n5"></p><div id="c5"></div></div></td>
+            <td><div class="parts" id="other"><p id="t6">Other</p><p id="n6"></p><div id="c6"></div></div></td>
+
+            </tr>
+
+            </table>
+          </div>
           		</div>
           	</div>
 			
-		</section><! --/wrapper -->
-      </section><!-- /MAIN CONTENT -->
+		</section>
+      </section>
 
       <!--main content end-->
       <!--footer start-->
@@ -197,7 +354,7 @@
 
     <!--script for this page-->
     
- 
+ <script src="general.js"></script>
 
   </body>
 </html>
